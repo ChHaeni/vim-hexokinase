@@ -150,15 +150,28 @@ let s:colours = {
             \ 'yellowgreen': '#9acd32'
             \ }
 
+let s:rcolors = hexokinase#patterns#rcolors#RBuiltinColName()
+
 function! hexokinase#patterns#colour_names#get_pattern() abort
-    return '\c\<\(' . join(keys(s:colours), '\|') . '\)\>'
+    let rtypes = ['r', 'rmd', 'quarto']
+    if index(rtypes, &filetype) != -1
+        return '\c\<\(' . join(keys(s:rcolors), '\|') . '\)\>'
+    else
+        return '\c\<\(' . join(keys(s:colours), '\|') . '\)\>'
+    endif
 endfunction
 
 function! hexokinase#patterns#colour_names#process(str) abort
     let str_lcase = tolower(a:str)
-    if has_key(s:colours, str_lcase)
-        return s:colours[str_lcase]
+    let rtypes = ['r', 'rmd', 'quarto']
+    if index(rtypes, &filetype) != -1
+        if has_key(s:rcolors, str_lcase)
+            return s:rcolors[str_lcase]
+        endif
     else
-        return ''
+        if has_key(s:colours, str_lcase)
+            return s:colours[str_lcase]
+        endif
     endif
+    return ''
 endfunction
